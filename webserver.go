@@ -19,7 +19,7 @@ func startHTTPserver() {
 	fmt.Println("Starting, port is", port)
 	err := http.ListenAndServe(port, mux)
 	if err != nil {
-		log.Fatal("Web server did not start, is another instance running?")
+		log.Fatal("Web server could not start, is another instance running?")
 	}
 }
 
