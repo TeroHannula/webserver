@@ -1,3 +1,4 @@
+// This is a simple HTTP server demo that uses net/http package only
 package main
 
 import (
