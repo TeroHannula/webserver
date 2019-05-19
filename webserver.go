@@ -4,33 +4,49 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 )
 
 func main() {
-	startHTTPserver()
-}
 
-func startHTTPserver() {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", indexHandler)
-	mux.HandleFunc("/list", listHandler)
-	mux.HandleFunc("/details", detailsHandler)
 	port := ":8090"
 	fmt.Println("Starting, port is", port)
-	err := http.ListenAndServe(port, mux)
+	handler := http.HandlerFunc(routeHandler)
+	err := http.ListenAndServe(port, handler)
 	if err != nil {
 		log.Fatal("Web server could not start, is another instance running?")
 	}
 }
 
-func indexHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Index")
+func routeHandler(w http.ResponseWriter, r *http.Request) {
+	params := strings.Split(r.URL.Path, "/")[1:]
+	switch first := strings.ToLower(string(params[0])); first {
+	case "list":
+		fmt.Fprintf(w, "%s", first)
+		listHandler(params[1:], w, r)
+	case "details":
+		fmt.Fprintf(w, "%s", first)
+		detailsHandler(params[1:], w, r)
+	default:
+		fmt.Fprintf(w, "Unknown page")
+		unknownHandler(params[1:], w, r)
+	}
 }
 
-func listHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "List")
+func listHandler(params []string, w http.ResponseWriter, r *http.Request) {
+	for k, v := range params {
+		fmt.Printf("List param %d: %s\n", k, v)
+	}
 }
 
-func detailsHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Details")
+func detailsHandler(params []string, w http.ResponseWriter, r *http.Request) {
+	for k, v := range params {
+		fmt.Printf("Details param %d: %s\n", k, v)
+	}
+}
+
+func unknownHandler(params []string, w http.ResponseWriter, r *http.Request) {
+	for k, v := range params {
+		fmt.Printf("Unknown param %d: %s\n", k, v)
+	}
 }
