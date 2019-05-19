@@ -29,8 +29,8 @@ func routeHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%s", first)
 		detailsHandler(params[1:], w, r)
 	default:
-		fmt.Fprintf(w, "Unknown page")
-		unknownHandler(params[1:], w, r)
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("This page is not there"))
 	}
 }
 
@@ -43,11 +43,5 @@ func listHandler(params []string, w http.ResponseWriter, r *http.Request) {
 func detailsHandler(params []string, w http.ResponseWriter, r *http.Request) {
 	for k, v := range params {
 		fmt.Printf("Details param %d: %s\n", k, v)
-	}
-}
-
-func unknownHandler(params []string, w http.ResponseWriter, r *http.Request) {
-	for k, v := range params {
-		fmt.Printf("Unknown param %d: %s\n", k, v)
 	}
 }
